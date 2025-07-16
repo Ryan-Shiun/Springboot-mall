@@ -5,6 +5,7 @@ import com.ryanshiun.springbootmall.dao.ProductQueryParams;
 import com.ryanshiun.springbootmall.dto.ProductRequest;
 import com.ryanshiun.springbootmall.model.Product;
 import com.ryanshiun.springbootmall.service.ProductService;
+import com.ryanshiun.springbootmall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -28,7 +29,7 @@ public class ProductController {
 
     // 查詢條件不能設為必要參數
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProduct(
+    public ResponseEntity<Page<Product>> getProduct(
             // 查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
@@ -40,7 +41,7 @@ public class ProductController {
             // 分業 Pagination
             @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit, // 使用 Max Min 記的要加上 @Validated
             @RequestParam(defaultValue = "0") @Min(0) Integer offset
-            ) {
+    ) {
         // 創建一個 class 去接收前端傳來的值，可用於搜尋條件很多的時候
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
@@ -50,8 +51,21 @@ public class ProductController {
         productQueryParams.setLimit(limit);
         productQueryParams.setOffset(offset);
 
+        // 取得 product list
         List<Product> productList = productService.getProducts(productQueryParams);
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+
+        // 取得 product 總數
+        Integer total = productService.countProduct(productQueryParams);
+
+        // 分頁
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(total);
+        // 將商品資訊改為放在 results 裡面回傳給前端
+        page.setResults(productList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
 
@@ -98,7 +112,7 @@ public class ProductController {
         productService.deleteProductById(productId);
 
         // 不需要區確認商品是否存在，只要確定商品消失不見就好
-        //就算刪除不存在的商品也回傳 204
+        // 就算刪除不存在的商品也回傳 204
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

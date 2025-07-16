@@ -24,6 +24,29 @@ public class ProductDaoImpl implements ProductDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    // 回傳客製化查詢的搜尋筆數
+    @Override
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+        String sql = "SELECT count(*) FROM product WHERE 1=1 ";
+        Map<String, Object> map = new HashMap<>();
+
+
+        if (productQueryParams.getCategory() != null) {
+
+            sql = sql + " AND category = :category";
+
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        if (productQueryParams.getSearch() != null) {
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+        return total;
+    }
+
     // 客製化查詢
     @Override
     public List<Product> getProducts(ProductQueryParams productQueryParams) {
