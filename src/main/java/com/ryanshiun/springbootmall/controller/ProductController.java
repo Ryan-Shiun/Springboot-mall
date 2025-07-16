@@ -6,15 +6,18 @@ import com.ryanshiun.springbootmall.dto.ProductRequest;
 import com.ryanshiun.springbootmall.model.Product;
 import com.ryanshiun.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
 
-
+@Validated
 @RestController
 public class ProductController {
 
@@ -29,9 +32,14 @@ public class ProductController {
             // 查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
+
             // 排序 sorting
             @RequestParam(defaultValue = "created_date") String orderBy,
-            @RequestParam(defaultValue = "desc") String sort
+            @RequestParam(defaultValue = "desc") String sort,
+
+            // 分業 Pagination
+            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit, // 使用 Max Min 記的要加上 @Validated
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset
             ) {
         // 創建一個 class 去接收前端傳來的值，可用於搜尋條件很多的時候
         ProductQueryParams productQueryParams = new ProductQueryParams();
@@ -39,6 +47,8 @@ public class ProductController {
         productQueryParams.setSearch(search);
         productQueryParams.setOrderBy(orderBy);
         productQueryParams.setSort(sort);
+        productQueryParams.setLimit(limit);
+        productQueryParams.setOffset(offset);
 
         List<Product> productList = productService.getProducts(productQueryParams);
         return ResponseEntity.status(HttpStatus.OK).body(productList);

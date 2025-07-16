@@ -33,7 +33,7 @@ public class ProductDaoImpl implements ProductDao {
         // WHERE 1=1 可以在後面加上許多客製化查詢自由拼接在 SQL 語法
         Map<String, Object> map = new HashMap<>();
 
-        // 判斷前端是否有回傳查詢條件
+        // 查詢條件
         if (productQueryParams.getCategory() != null) {
             // AND 前面記的要留空白
             sql = sql + " AND category = :category";
@@ -45,8 +45,15 @@ public class ProductDaoImpl implements ProductDao {
             sql = sql + " AND product_name LIKE :search";
             map.put("search", "%" + productQueryParams.getSearch() + "%");
         }
+
+        // 排序
         // ORDER BY 只能用字串拼接做，不能使用上面動態傳入的方法
         sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+
+        // 分頁
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit", productQueryParams.getLimit());
+        map.put("offset", productQueryParams.getOffset());
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         return productList;
