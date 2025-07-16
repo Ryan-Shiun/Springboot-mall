@@ -27,7 +27,7 @@ public class ProductController {
     @Autowired
     private WebRequest webRequest;
 
-    // 查詢條件不能設為必要參數
+    // 查詢商品 By 搜尋條件
     @GetMapping("/products")
     public ResponseEntity<Page<Product>> getProduct(
             // 查詢條件 Filtering
@@ -38,7 +38,7 @@ public class ProductController {
             @RequestParam(defaultValue = "created_date") String orderBy,
             @RequestParam(defaultValue = "desc") String sort,
 
-            // 分業 Pagination
+            // 分頁 Pagination
             @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit, // 使用 Max Min 記的要加上 @Validated
             @RequestParam(defaultValue = "0") @Min(0) Integer offset
     ) {
@@ -68,7 +68,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
-
+    // 查詢商品名稱 By productId
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
         Product product = productService.getProductById(productId);
@@ -81,6 +81,7 @@ public class ProductController {
         }
     }
 
+    // 新增商品
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
         Integer productId =  productService.createProduct(productRequest);
@@ -90,6 +91,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
+    // 修改商品 By productId
     @PutMapping("/products/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
                                                  @RequestBody @Valid ProductRequest productRequest) {
@@ -107,6 +109,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
     }
 
+    // 刪除商品 By productId
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<?>deleteProduct(@PathVariable Integer productId) {
         productService.deleteProductById(productId);
