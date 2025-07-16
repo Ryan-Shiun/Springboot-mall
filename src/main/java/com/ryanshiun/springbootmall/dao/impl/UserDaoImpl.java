@@ -23,6 +23,7 @@ public class UserDaoImpl implements UserDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    // 查詢使用者 By userId
     public User getUserById(Integer userId) {
         String sql = "SELECT user_id, email, password, created_date, last_modified_date " +
                 "FROM user WHERE user_id = :userId";
@@ -39,6 +40,23 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    // 查詢使用者 By user email
+    @Override
+    public User getUserByEmail(String email) {
+        String sql = "SELECT user_id, email, password, created_date, last_modified_date " +
+                "FROM user WHERE email = :email";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("email", email);
+
+        List<User> userList = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
+
+        if (userList.size() > 0) {
+            return userList.get(0);
+        } else {
+            return null;
+        }
+    }
 
     // 註冊使用者
     @Override
