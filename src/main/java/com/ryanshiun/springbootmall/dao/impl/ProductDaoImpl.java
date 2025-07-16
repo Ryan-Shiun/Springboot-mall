@@ -30,18 +30,8 @@ public class ProductDaoImpl implements ProductDao {
         String sql = "SELECT count(*) FROM product WHERE 1=1 ";
         Map<String, Object> map = new HashMap<>();
 
-
-        if (productQueryParams.getCategory() != null) {
-
-            sql = sql + " AND category = :category";
-
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        if (productQueryParams.getSearch() != null) {
-            sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        // 呼叫下方 sql 字串拼接
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
         return total;
@@ -56,18 +46,7 @@ public class ProductDaoImpl implements ProductDao {
         // WHERE 1=1 可以在後面加上許多客製化查詢自由拼接在 SQL 語法
         Map<String, Object> map = new HashMap<>();
 
-        // 查詢條件
-        if (productQueryParams.getCategory() != null) {
-            // AND 前面記的要留空白
-            sql = sql + " AND category = :category";
-            // Enum type 要使用 name() 轉換成字串
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        if (productQueryParams.getSearch() != null) {
-            sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // 排序
         // ORDER BY 只能用字串拼接做，不能使用上面動態傳入的方法
@@ -158,5 +137,21 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
         map.put("productId", productId);
         namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    // 根據不同的查詢條件來去拼接 sql，畢竟 軟體的價值在於 { 重複使用 }
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
+        if (productQueryParams.getCategory() != null) {
+            // AND 前面記的要留空白
+            sql = sql + " AND category = :category";
+            // Enum type 要使用 name() 轉換成字串
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        if (productQueryParams.getSearch() != null) {
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+        return sql;
     }
 }
