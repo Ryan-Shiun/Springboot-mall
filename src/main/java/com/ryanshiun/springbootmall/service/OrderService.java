@@ -6,4 +6,5 @@ import com.ryanshiun.springbootmall.model.Order;
 public interface OrderService {
 
     Integer createOrder(Integer userId, CreteOrderRequest creteOrderRequest);
+    Order getOrderById(Integer orderId);
 }

@@ -5,6 +5,7 @@ import com.ryanshiun.springbootmall.dao.ProductDao;
 import com.ryanshiun.springbootmall.dao.impl.OrderDaoImpl;
 import com.ryanshiun.springbootmall.dto.BuyItem;
 import com.ryanshiun.springbootmall.dto.CreteOrderRequest;
+import com.ryanshiun.springbootmall.model.Order;
 import com.ryanshiun.springbootmall.model.OrderItem;
 import com.ryanshiun.springbootmall.model.Product;
 import com.ryanshiun.springbootmall.service.OrderService;
@@ -23,6 +24,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Transactional
+    @Override
+    public Order getOrderById(Integer orderId) {
+        Order order = orderDao.getOrderById(orderId);
+
+        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+
+        order.setOrderItemList(orderItemList);
+        return order;
+    }
 
     // 修改多張 SQL 表格要使用 rollback
     @Transactional

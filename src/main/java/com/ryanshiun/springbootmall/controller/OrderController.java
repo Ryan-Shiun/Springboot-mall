@@ -23,6 +23,9 @@ public class OrderController {
     public ResponseEntity<?> createOrder(@PathVariable Integer userId,
                                          @RequestBody @Valid CreteOrderRequest creteOrderRequest) {
         Integer orderId = orderService.createOrder(userId, creteOrderRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+
+        // 回傳整筆訂單資訊給前端
+        Order order = orderService.getOrderById(orderId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 }
