@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS product
     last_modified_date TIMESTAMP    NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user
+CREATE TABLE IF NOT EXISTS `user`
 (
     user_id            INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
     email              VARCHAR(256) NOT NULL UNIQUE,
