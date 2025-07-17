@@ -1,6 +1,6 @@
 package com.ryanshiun.springbootmall.controller;
 
-import com.ryanshiun.springbootmall.dto.CreteOrderRequest;
+import com.ryanshiun.springbootmall.dto.CreateOrderRequest;
 import com.ryanshiun.springbootmall.dto.OrderQueryParams;
 import com.ryanshiun.springbootmall.model.Order;
 import com.ryanshiun.springbootmall.service.OrderService;
@@ -54,8 +54,8 @@ public class OrderController {
     // 創建訂單 (在帳號已經存在的情況下才可以創建訂單)
     @PostMapping("/users/{userId}/orders")
     public ResponseEntity<?> createOrder(@PathVariable Integer userId,
-                                         @RequestBody @Valid CreteOrderRequest creteOrderRequest) {
-        Integer orderId = orderService.createOrder(userId, creteOrderRequest);
+                                         @RequestBody @Valid CreateOrderRequest createOrderRequest) {
+        Integer orderId = orderService.createOrder(userId, createOrderRequest);
 
         // 回傳整筆訂單資訊給前端
         Order order = orderService.getOrderById(orderId);

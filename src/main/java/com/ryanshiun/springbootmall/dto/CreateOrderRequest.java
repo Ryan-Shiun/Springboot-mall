@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CreteOrderRequest {
+public class CreateOrderRequest {
 
     @NotEmpty
     private List<BuyItem> buyItemList;

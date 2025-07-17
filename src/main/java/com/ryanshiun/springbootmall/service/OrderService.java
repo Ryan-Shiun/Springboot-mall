@@ -1,6 +1,6 @@
 package com.ryanshiun.springbootmall.service;
 
-import com.ryanshiun.springbootmall.dto.CreteOrderRequest;
+import com.ryanshiun.springbootmall.dto.CreateOrderRequest;
 import com.ryanshiun.springbootmall.dto.OrderQueryParams;
 import com.ryanshiun.springbootmall.model.Order;
 
@@ -12,7 +12,7 @@ public interface OrderService {
 
     List<Order> getOrders(OrderQueryParams orderQueryParams);
 
-    Integer createOrder(Integer userId, CreteOrderRequest creteOrderRequest);
+    Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest);
 
     Order getOrderById(Integer orderId);
 }

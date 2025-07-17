@@ -3,16 +3,14 @@ package com.ryanshiun.springbootmall.service.impl;
 import com.ryanshiun.springbootmall.dao.OrderDao;
 import com.ryanshiun.springbootmall.dao.ProductDao;
 import com.ryanshiun.springbootmall.dao.UserDao;
-import com.ryanshiun.springbootmall.dao.impl.OrderDaoImpl;
 import com.ryanshiun.springbootmall.dto.BuyItem;
-import com.ryanshiun.springbootmall.dto.CreteOrderRequest;
+import com.ryanshiun.springbootmall.dto.CreateOrderRequest;
 import com.ryanshiun.springbootmall.dto.OrderQueryParams;
 import com.ryanshiun.springbootmall.model.Order;
 import com.ryanshiun.springbootmall.model.OrderItem;
 import com.ryanshiun.springbootmall.model.Product;
 import com.ryanshiun.springbootmall.model.User;
 import com.ryanshiun.springbootmall.service.OrderService;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
     // 修改多張 SQL 表格要使用 rollback
     @Transactional
     @Override
-    public Integer createOrder(Integer userId, CreteOrderRequest creteOrderRequest) {
+    public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
 
         User user = userDao.getUserById(userId);
 
@@ -85,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
         int totalAmount = 0;
         List<OrderItem> orderItemList = new ArrayList<>();
         // 先逐個去 product 撈商品價錢
-        for (BuyItem buyItem : creteOrderRequest.getBuyItemList()) {
+        for (BuyItem buyItem : createOrderRequest.getBuyItemList()) {
             Product product = productDao.getProductById(buyItem.getProductId());
 
             // 檢查 Product 是否存在、庫存是否足夠
